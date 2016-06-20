@@ -17,9 +17,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> imageUrlList=new ArrayList<>();
     ProgressDialog mProgressDialog;
     Handler handler;
+    private ItemTouchHelper mItemTouchHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,10 +99,21 @@ public class MainActivity extends AppCompatActivity {
         adapter=new RecyclerAdapter(MainActivity.this, list);
         linearLayoutManager=new LinearLayoutManager(this);
         gridLayoutManager=new GridLayoutManager(this,4);
-        //view.setLayoutManager(linearLayoutManager);
-        view.setLayoutManager(gridLayoutManager);
+        view.setLayoutManager(linearLayoutManager);
+        //view.setLayoutManager(gridLayoutManager);
         view.setAdapter(adapter);
         view.setItemAnimator(new DefaultItemAnimator());
+        adapter.setOnItemclickListener(new RecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, ""+ position, Toast.LENGTH_SHORT).show();
+                adapter.remove(position);
+            }
+        });
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(view);
+
     }
 
     private void initData(){
